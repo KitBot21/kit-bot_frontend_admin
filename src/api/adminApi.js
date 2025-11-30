@@ -6,7 +6,7 @@ import axiosInstance from "./axiosInstance";
 // 사용자 목록 조회
 export const fetchUsers = async () => {
   const res = await axiosInstance.get("/api/admin/users");
-  return res.data; // 스웨거 응답 배열 그대로
+  return res.data.content; // content 배열만 반환
 };
 
 // 사용자 정지
@@ -22,9 +22,8 @@ export const activateUser = (userId) =>
 // 게시글 목록 조회
 export const fetchPosts = async () => {
   const res = await axiosInstance.get("/api/admin/posts");
-  return res.data;
+  return res.data.content; // content 배열만 반환
 };
-
 // 게시글 언블라인드 해제
 export const unblindPost = (postId) =>
   axiosInstance.patch(`/api/admin/posts/${postId}/unblind`);

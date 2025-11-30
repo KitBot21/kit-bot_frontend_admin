@@ -11,23 +11,21 @@ export default function LoginPage() {
 
   const handleGoogleSuccess = async (credentialResponse) => {
     try {
-      const idToken = credentialResponse.credential; // 구글에서 준 토큰
+      const idToken = credentialResponse.credential;
 
-      // 백엔드 로그인 호출
       const res = await axiosInstance.post("/api/auth/google/login", {
         idToken,
       });
 
-      // 스웨거 예시 응답 구조
-      // { accessToken: "...", user: { id, email, username, role, usernameSet } }
-      login(res.data); // AuthContext.login 에서 { accessToken, user } 받게 해둠
-      nav("/"); // 기본 관리자 메인으로 이동
+      console.log("백엔드 응답:", res.data); // 이거 추가
+
+      login(res.data);
+      nav("/");
     } catch (e) {
       console.error(e);
       alert("로그인 실패");
     }
   };
-
   const handleGoogleError = () => {
     alert("Google 로그인 실패");
   };
