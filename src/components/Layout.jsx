@@ -9,26 +9,34 @@ import {
   AppBar,
   Typography,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, Outlet, useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext.jsx";
 
 const drawerWidth = 220;
 
-export default function Layout({ children }) {
+export default function Layout() {
   const { logout } = useAuth();
   const loc = useLocation();
+  const nav = useNavigate();
+
+  const handleLogout = () => {
+    logout();
+    nav("/login", { replace: true });
+  };
 
   return (
     <Box sx={{ display: "flex" }}>
+      {/* 상단 바 */}
       <AppBar position="fixed" sx={{ zIndex: 1201 }}>
         <Toolbar sx={{ justifyContent: "space-between" }}>
           <Typography variant="h6">KIT-Bot 관리자</Typography>
-          <Typography sx={{ cursor: "pointer" }} onClick={logout}>
+          <Typography sx={{ cursor: "pointer" }} onClick={handleLogout}>
             로그아웃
           </Typography>
         </Toolbar>
       </AppBar>
 
+      {/* 사이드바 */}
       <Drawer
         variant="permanent"
         sx={{
@@ -58,11 +66,9 @@ export default function Layout({ children }) {
         </List>
       </Drawer>
 
-      <Box
-        component="main"
-        sx={{ flexGrow: 1, p: 3, mt: 8, ml: `${drawerWidth}px` }}
-      >
-        {children}
+      {/* 메인 컨텐츠 */}
+      <Box component="main" sx={{ flexGrow: 1, p: 3, mt: 8 }}>
+        <Outlet />
       </Box>
     </Box>
   );
