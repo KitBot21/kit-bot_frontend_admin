@@ -6,7 +6,10 @@ import axiosInstance from "./axiosInstance";
 // 사용자 목록 조회
 export const fetchUsers = async () => {
   const res = await axiosInstance.get("/api/admin/users");
-  return res.data.content; // content 배열만 반환
+  const users = res.data.content;
+
+  // admin role 제외
+  return users.filter((u) => u.role.toLowerCase() !== "admin");
 };
 
 // 사용자 정지
@@ -20,10 +23,22 @@ export const activateUser = (userId) =>
 /** ================= 게시글 관리 ================= */
 
 // 게시글 목록 조회
-export const fetchPosts = async () => {
-  const res = await axiosInstance.get("/api/admin/posts");
+// status: "ACTIVE" | "BLINDED" | "DELETED" | "ALL"
+export const fetchPosts = async (options = {}) => {
+  const { status = "ALL", keyword = "", page = 0, size = 50 } = options;
+
+  const res = await axiosInstance.get("/api/admin/posts", {
+    params: {
+      status,
+      keyword,
+      page,
+      size,
+    },
+  });
+
   return res.data.content; // content 배열만 반환
 };
+
 // 게시글 언블라인드 해제
 export const unblindPost = (postId) =>
   axiosInstance.patch(`/api/admin/posts/${postId}/unblind`);

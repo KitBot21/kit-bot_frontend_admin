@@ -7,7 +7,12 @@ export default function AdminRoute({ children }) {
 
   if (loading) return <div>로딩 중...</div>;
 
-  if (!user || user.role !== "admin") {
+  if (!user) {
+    return <Navigate to="/login" replace />;
+  }
+
+  const role = (user.role || "").toLowerCase();
+  if (role !== "admin") {
     return <Navigate to="/login" replace />;
   }
 
