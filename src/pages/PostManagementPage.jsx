@@ -15,16 +15,18 @@ import {
   Stack,
 } from "@mui/material";
 import { fetchPosts, unblindPost, softDeletePost } from "../api/adminApi";
-// blindPost를 쓰게 되면 위 import에 추가
+import PostDetailDialog from "../components/PostDetailDialog.jsx"; // ✅ 새로 만들 컴포넌트
 
 export default function PostManagementPage() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  // ✅ 상세보기용
+  const [selectedPostId, setSelectedPostId] = useState(null);
+
   const load = async () => {
     setLoading(true);
     try {
-      // 🔹 전체 게시글 조회 (ACTIVE/BLINDED/DELETED 모두)
       const data = await fetchPosts({ status: "ALL", page: 0, size: 100 });
       setPosts(data);
     } catch (e) {
@@ -59,17 +61,6 @@ export default function PostManagementPage() {
       alert("게시글 삭제 실패");
     }
   };
-
-  // 블라인드 API가 준비되면 여기서 사용
-  // const handleBlind = async (id) => {
-  //   try {
-  //     await blindPost(id);
-  //     await load();
-  //   } catch (e) {
-  //     console.error(e);
-  //     alert("블라인드 처리 실패");
-  //   }
-  // };
 
   const formatDateTime = (value) => {
     if (!value) return "-";
@@ -149,6 +140,15 @@ export default function PostManagementPage() {
 
                   <TableCell>
                     <Stack direction="row" spacing={1}>
+                      {/* ✅ 상세보기 버튼 */}
+                      <Button
+                        size="small"
+                        variant="outlined"
+                        onClick={() => setSelectedPostId(p.id)}
+                      >
+                        상세보기
+                      </Button>
+
                       {isBlinded && (
                         <Button
                           size="small"
@@ -158,17 +158,6 @@ export default function PostManagementPage() {
                           언블라인드
                         </Button>
                       )}
-
-                      {/* 블라인드 엔드포인트 생기면 사용
-                      {isActive && (
-                        <Button
-                          size="small"
-                          variant="contained"
-                          onClick={() => handleBlind(p.id)}
-                        >
-                          블라인드
-                        </Button>
-                      )} */}
 
                       {!isDeleted && (
                         <Button
@@ -188,6 +177,13 @@ export default function PostManagementPage() {
           </TableBody>
         </Table>
       </Paper>
+
+      {/* ✅ 게시글 상세 + 댓글/대댓글 모달 */}
+      <PostDetailDialog
+        open={!!selectedPostId}
+        postId={selectedPostId}
+        onClose={() => setSelectedPostId(null)}
+      />
     </Box>
   );
 }
