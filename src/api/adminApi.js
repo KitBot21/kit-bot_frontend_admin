@@ -3,13 +3,28 @@ import axiosInstance from "./axiosInstance";
 
 /** ================= 사용자 관리 ================= */
 
+// // 사용자 목록 조회
+// export const fetchUsers = async () => {
+//   const res = await axiosInstance.get("/api/admin/users");
+//   const users = res.data.content;
+
+//   // admin role 제외
+//   return users.filter((u) => u.role.toLowerCase() !== "admin");
+// };
+
 // 사용자 목록 조회
 export const fetchUsers = async () => {
   const res = await axiosInstance.get("/api/admin/users");
-  const users = res.data.content;
+
+  console.log("관리자 사용자 응답:", res.data); // 한 번 찍어보면 실제 구조 바로 보임
+
+  const data = res.data;
+  // 1) 응답이 그냥 배열이면 그대로 사용
+  // 2) Page 형태면 data.content 사용
+  const users = Array.isArray(data) ? data : data?.content ?? [];
 
   // admin role 제외
-  return users.filter((u) => u.role.toLowerCase() !== "admin");
+  return users.filter((u) => u.role?.toLowerCase() !== "admin");
 };
 
 // 사용자 정지
