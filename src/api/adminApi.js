@@ -51,3 +51,16 @@ export const softDeletePost = (postId) =>
 // 스웨거 보고 URL 확인 후 이런 식으로 하나 더 추가하면 됨:
 // export const blindPost = (postId) =>
 //   axiosInstance.patch(`/api/posts/${postId}/blind`);
+
+// 🔹 ✅ 게시글 상세 (댓글/대댓글 + 닉네임 포함)
+export async function fetchPostDetail(postId) {
+  const res = await axiosInstance.get(`/api/admin/posts/${postId}/detail`);
+  return res.data; // PostAdminDetailDTO
+}
+
+// 🔹 ✅ 댓글 soft delete (관리자)
+export async function softDeleteComment(commentId, reason) {
+  await axiosInstance.patch(`/admin/comments/${commentId}/soft-delete`, {
+    reason,
+  });
+}
